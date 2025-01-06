@@ -13,7 +13,7 @@
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/logo_real.png') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/logo_smk.png') }}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -72,44 +72,23 @@
     <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
 
 <body>
-    <div id="preloader">
-        <div class="sk-chase sk-primary">
-            <div class="sk-chase-dot"></div>
-            <div class="sk-chase-dot"></div>
-            <div class="sk-chase-dot"></div>
-            <div class="sk-chase-dot"></div>
-            <div class="sk-chase-dot"></div>
-            <div class="sk-chase-dot"></div>
-        </div>
-    </div>
-    <!-- Layout wrapper -->
-    <div class="layout-wrapper layout-content-navbar">
+    @include('components.navbar')
+    <div class="layout-wrapper">
         <div class="layout-container">
-            <!-- Menu -->
-            @include('components.sidebar')
-            <!-- / Menu -->
+            <!-- Navbar -->
+            <!-- / Navbar -->
 
-            <!-- Layout container -->
-            <div class="layout-page">
-                <!-- Navbar -->
-                @include('components.navbar')
-                <!-- / Navbar -->
+            <!-- Content wrapper -->
+            <div class="content-wrapper">
+                <!-- Content -->
+                @yield('content')
+                <!-- / Content -->
 
-                <!-- Content wrapper -->
-                <div class="content-wrapper">
-                    <!-- Content -->
-                    @yield('content')
-                    <!-- / Content -->
-
-                    <!-- Footer -->
-                    @include('components.footer')
-                    <!-- / Footer -->
-
-                    <div class="content-backdrop fade"></div>
-                </div>
-                <!-- Content wrapper -->
+                <!-- Footer -->
+                @include('components.footer')
+                <!-- / Footer -->
             </div>
-            <!-- / Layout page -->
+            <!-- Content wrapper -->
         </div>
 
         <!-- Overlay -->
