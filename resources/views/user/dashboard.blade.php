@@ -26,7 +26,7 @@
                     <div class="card-body d-flex flex-column justify-content-center align-items-center">
                         <img src="{{ asset('images/mapel_basic.png') }}" class="img-mapel" alt="">
                         <h3 class="fw-bold mt-3 mb-1 text-center" style="height: 80px;">Pendidikan Jasmani, Olah Raga &
-                            Kesehatan Admin</h3>
+                            Kesehatan</h3>
                         <div class="row">
                             <div class="col-6">
                                 <button class="btn btn-primary text-nowrap"><i class="fa fa-circle-question me-2"></i>40
@@ -37,7 +37,7 @@
                                     Menit</button>
                             </div>
                         </div>
-                        <button class="btn btn-warning text-nowrap mt-3">Kerjakan<i
+                        <button class="btn btn-warning text-nowrap mt-3" onclick="openModal()">Kerjakan<i
                                 class="fa fa-arrow-right ms-2"></i></button>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                                     Menit</button>
                             </div>
                         </div>
-                        <button class="btn btn-warning text-nowrap mt-3">Kerjakan<i
+                        <button class="btn btn-warning text-nowrap mt-3" onclick="openModal()">Kerjakan<i
                                 class="fa fa-arrow-right ms-2"></i></button>
                     </div>
                 </div>
@@ -78,7 +78,7 @@
                                     Menit</button>
                             </div>
                         </div>
-                        <button class="btn btn-warning text-nowrap mt-3">Kerjakan<i
+                        <button class="btn btn-warning text-nowrap mt-3" onclick="openModal()">Kerjakan<i
                                 class="fa fa-arrow-right ms-2"></i></button>
                     </div>
                 </div>
@@ -98,7 +98,7 @@
                                     Menit</button>
                             </div>
                         </div>
-                        <button class="btn btn-warning text-nowrap mt-3">Kerjakan<i
+                        <button class="btn btn-warning text-nowrap mt-3" onclick="openModal()">Kerjakan<i
                                 class="fa fa-arrow-right ms-2"></i></button>
                     </div>
                 </div>
@@ -119,7 +119,7 @@
                                     Menit</button>
                             </div>
                         </div>
-                        <button class="btn btn-warning text-nowrap mt-3">Kerjakan<i
+                        <button class="btn btn-warning text-nowrap mt-3" onclick="openModal()">Kerjakan<i
                                 class="fa fa-arrow-right ms-2"></i></button>
                     </div>
                 </div>
@@ -139,7 +139,7 @@
                                     Menit</button>
                             </div>
                         </div>
-                        <button class="btn btn-warning text-nowrap mt-3">Kerjakan<i
+                        <button class="btn btn-warning text-nowrap mt-3" onclick="openModal()">Kerjakan<i
                                 class="fa fa-arrow-right ms-2"></i></button>
                     </div>
                 </div>
@@ -159,7 +159,7 @@
                                     Menit</button>
                             </div>
                         </div>
-                        <button class="btn btn-warning text-nowrap mt-3">Kerjakan<i
+                        <button class="btn btn-warning text-nowrap mt-3" onclick="openModal()">Kerjakan<i
                                 class="fa fa-arrow-right ms-2"></i></button>
                     </div>
                 </div>
@@ -180,7 +180,7 @@
                                     Menit</button>
                             </div>
                         </div>
-                        <button class="btn btn-warning text-nowrap mt-3">Kerjakan<i
+                        <button class="btn btn-warning text-nowrap mt-3" onclick="openModal()">Kerjakan<i
                                 class="fa fa-arrow-right ms-2"></i></button>
                     </div>
                 </div>
@@ -199,6 +199,19 @@
 @endsection
 @push('js')
     <script>
-        
+        function openModal() {
+            $.ajax({
+                    url: "{{ route('dashboard.show') }}",
+                    type: 'GET',
+                })
+                .done(function(data) {
+                    $('#content-modal-ce').html(data);
+
+                    $("#modal-ce").modal("show");
+                })
+                .fail(function() {
+                    Swal.fire('Error!', 'An error occurred while creating the record.', 'error');
+                });
+        }
     </script>
 @endpush

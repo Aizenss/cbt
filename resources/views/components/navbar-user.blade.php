@@ -5,17 +5,11 @@
 </style>
 <nav class="layout-navbar container-xxl navbar navbar-detached align-items-center bg-navbar"
     id="layout-navbar">
-    <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
-        <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
-            <i class="ti ti-menu-2 ti-sm"></i>
-        </a>
-    </div>
-
     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
         <!-- Search -->
         <div class="navbar-nav align-items-center">
             <div class="nav-item d-flex flex-column mb-0">
-                <h4 class="fw-semibold mb-0 text-white">{{ Auth::user()->name }}</h4>
+                <h5 class="fw-bold mb-0 text-white">{{ Auth::user()->name }}</h5>
                 <span class="text-white">XII RPL 1 - SESI 3 - Ruang 5</span>
             </div>
         </div>
