@@ -22,7 +22,7 @@ Route::middleware('auth')->group(function () {
 
 //admin dan guru
 Route::middleware(['auth', 'role:admin|guru'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'viewAdminGuru'])->name('dashboard-admin-guru');
+    Route::get('/dashboard-manajemen', [DashboardController::class, 'indexAdmin'])->name('dashboard.admin');
 
     //exam bank
     Route::get('/exam-bank/datatable', [ExamBankController::class, 'datatable'])->name('exam-bank.datatable');
@@ -55,7 +55,9 @@ Route::middleware(['auth', 'role:guru'])->group(function () {});
 
 //user
 Route::middleware(['auth', 'role:user'])->group(function () {
-    Route::get('/user', [DashboardController::class, 'viewUser'])->name('dashboard-user');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/create', [DashboardController::class, 'create'])->name('dashboard.create');
+    Route::get('/dashboard/show', [DashboardController::class, 'show'])->name('dashboard.show');
 });
 
 require __DIR__ . '/auth.php';
