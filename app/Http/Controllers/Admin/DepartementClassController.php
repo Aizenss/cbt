@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Main;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Department;
+use App\Models\DepartementClass;
 use Illuminate\Http\Request;
 
-class DepartementController extends Controller
+class DepartementClassController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,6 +14,7 @@ class DepartementController extends Controller
     public function index()
     {
         //
+        return view('admin.departement_class.index');
     }
 
     public function datatable(Request $request)
@@ -41,12 +42,23 @@ class DepartementController extends Controller
             ->addColumn('id', function ($data) {
                 return $data->id ?? null;
             })
-            ->addColumn('name', function ($data) {
-                return $data->name ?? null;
+            ->addColumn('fullname', function ($data) {
+                return $data->grade_level . ' ' . $data->alias . ' ' . $data->identity;
+            })
+            ->addColumn('departement_id', function ($data) {
+                return $data->departement->name ?? null;
+            })
+            ->addColumn('alias', function ($data) {
+                return $data->alias ?? null;
+            })
+            ->addColumn('identity', function ($data) {
+                return $data->identity ?? null;
+            })
+            ->addColumn('grade_level', function ($data) {
+                return $data->grade_level ?? null;
             })
             ->addColumn('action', function ($data) {
                 $btn = '<div class="d-flex">';
-                $btn .= '<a href="javascript:void(0);" class="btn btn-primary btn-sm me-1" title="Show Data" onclick="showData(\'' . $data->id . '\')"><i class="ti ti-eye"></i></a>';
                 $btn .= '<a href="javascript:void(0);" class="btn btn-primary btn-sm me-1" title="Edit Data" onclick="editData(\'' . $data->id . '\')"><i class="ti ti-pencil"></i></a>';
                 $btn .= '<a href="javascript:void(0);" class="btn btn-danger btn-sm" title="Hapus Data" onclick="deleteData(\'' . $data->id . '\')"><i class="ti ti-trash"></i></a>';
                 $btn .= '</div>';
@@ -60,19 +72,27 @@ class DepartementController extends Controller
     {
         $columns = [
             'id',
-            'name',
+            'departement_id',
+            'alias',
+            'identity',
+            'grade_level',
             'created_at'
         ];
 
         $keyword = $request->search['value'] ?? null;
+        $department_id = $request->department_id ?? null;
 
-        $data = Department::orderBy('created_at', 'desc')->select($columns)->where(function ($query) use ($keyword, $columns) {
+        $data = DepartementClass::orderBy('created_at', 'desc')->select($columns)->where(function ($query) use ($keyword, $columns) {
             if ($keyword != '') {
                 foreach ($columns as $column) {
                     $query->orWhere($column, 'LIKE', '%' . $keyword . '%');
                 }
             }
         });
+
+        if ($department_id) {
+            $data->where('departement_id', $department_id);
+        }
 
         return $data;
     }
@@ -83,7 +103,7 @@ class DepartementController extends Controller
     public function create()
     {
         //
-        return view('main.exam_bank.create');
+        return view('admin.departement_class.create');
     }
 
     /**
@@ -92,14 +112,12 @@ class DepartementController extends Controller
     public function store(Request $request)
     {
         //
-        $data = $request->all();
-
-        $data = Department::create($data);
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Data berhasil ditambahkan!',
-        ]);
+        try {
+            DepartementClass::create($request->all());
+            return response()->json(['status' => true, 'message' => 'Data berhasil disimpan']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => false, 'message' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -108,9 +126,8 @@ class DepartementController extends Controller
     public function show(string $id)
     {
         //
-        $data = Department::find($id);
-
-        return view('main.exam_bank.show', compact('data'));
+        $data = DepartementClass::find($id);
+        return view('admin.departement_class.show', compact('data'));
     }
 
     /**
@@ -119,9 +136,8 @@ class DepartementController extends Controller
     public function edit(string $id)
     {
         //
-        $data = Department::find($id);
-
-        return view('main.exam_bank.edit', compact('data'));
+        $data = DepartementClass::find($id);
+        return view('admin.departement_class.edit', compact('data'));
     }
 
     /**
@@ -130,14 +146,12 @@ class DepartementController extends Controller
     public function update(Request $request, string $id)
     {
         //
-        $data = $request->all();
-
-        $data = Department::find($id)->update($data);
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Data berhasil diubah!',
-        ]);
+        try {
+            DepartementClass::find($id)->update($request->all());
+            return response()->json(['status' => true, 'message' => 'Data berhasil diubah']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => false, 'message' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -146,12 +160,12 @@ class DepartementController extends Controller
     public function destroy(string $id)
     {
         //
-        $data = Department::find($id)->delete();
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Data berhasil dihapus!',
-        ]);
+        try {
+            DepartementClass::find($id)->delete();
+            return response()->json(['status' => true, 'message' => 'Data berhasil dihapus']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => false, 'message' => $e->getMessage()]);
+        }
     }
 
     public function destroyAll(Request $request)
@@ -162,11 +176,18 @@ class DepartementController extends Controller
             $decryptedIds[] = $encryptedId;
         }
 
-        $delete = Department::whereIn('id', $decryptedIds)->delete();
+        try {
+            $delete = DepartementClass::whereIn('id', $decryptedIds)->delete();
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Data Berhasil Dihapus!',
-        ]);
+            return response()->json([
+                'status' => true,
+                'message' => 'Data Berhasil Dihapus!',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }

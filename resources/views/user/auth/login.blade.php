@@ -85,16 +85,15 @@
                     <div class="card-body">
                         <div class="d-flex flex-column justify-content-center">
                             <h5 class="login-text text-center mb-2">Silakan Login</h5>
-                            <p class="text-muted text-center mb-4">login admin dan guru</p>
-                            <form class="mb-3" action="{{ route('login') }}" method="POST">
+                            <form class="mb-3" action="{{ route('login-student') }}" method="POST">
                                 @csrf
                                 <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="text" class="form-control" id="email" name="email"
-                                        placeholder="Enter your email" autofocus />
+                                    <label for="nis" class="form-label">NIS</label>
+                                    <input type="text" class="form-control" id="nis" name="nis"
+                                        placeholder="contoh: 16161" autofocus />
                                 </div>
                                 <div class="mb-3 form-password-toggle">
-                                    <label class="form-label" for="password">Password</label>
+                                    <label class="form-label" for="password">Tanggal Lahir</label>
                                     <div class="input-group input-group-merge">
                                         <input type="password" id="password" class="form-control" name="password"
                                             placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"

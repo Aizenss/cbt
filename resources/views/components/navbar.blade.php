@@ -16,7 +16,7 @@
         <div class="navbar-nav align-items-center">
             <div class="nav-item d-flex flex-column mb-0">
                 <h4 class="fw-semibold mb-0 text-white">{{ Auth::user()->name }}</h4>
-                <span class="text-white">XII RPL 1 - SESI 3 - Ruang 5</span>
+                <span class="text-white">{{ Auth::user()->roles->pluck('name')->first() }}</span>
             </div>
         </div>
         <!-- /Search -->

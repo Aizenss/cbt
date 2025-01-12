@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\DepartementClassController;
+use App\Http\Controllers\Admin\ExamScheduleController;
+use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Main\DepartementController;
 use App\Http\Controllers\Main\ExamBankController;
@@ -21,7 +24,7 @@ Route::middleware('auth')->group(function () {
 });
 
 //admin dan guru
-Route::middleware(['auth', 'role:admin|guru'])->group(function () {
+Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard-manajemen', [DashboardController::class, 'indexAdmin'])->name('dashboard.admin');
 
     //exam bank
@@ -35,7 +38,10 @@ Route::middleware(['auth', 'role:admin|guru'])->group(function () {
     Route::get('/question-bank/datatable', [QuestionBankController::class, 'datatable'])->name('question-bank.datatable');
     Route::get('/question-bank/destroy-all', [ExamBankController::class, 'destroyAll'])->name('question-bank.destroyAll');
     Route::resource('question-bank', QuestionBankController::class);
+});
 
+//admin
+Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     //subject
     Route::get('/subject/datatable', [SubjectController::class, 'datatable'])->name('subject.datatable');
     Route::get('/subject/destroy-all', [SubjectController::class, 'destroyAll'])->name('subject.destroyAll');
@@ -45,19 +51,28 @@ Route::middleware(['auth', 'role:admin|guru'])->group(function () {
     Route::get('/department/datatable', [DepartementController::class, 'datatable'])->name('department.datatable');
     Route::get('/department/destroy-all', [DepartementController::class, 'destroyAll'])->name('department.destroyAll');
     Route::resource('department', DepartementController::class);
-});
 
-//admin
-Route::middleware(['auth', 'role:admin'])->group(function () {});
+    //exam schedule
+    Route::get('/exam-schedule/datatable-student', [ExamScheduleController::class, 'datatableStudent'])->name('exam-schedule.datatable-student');
+    Route::post('/exam-schedule/share-store', [ExamScheduleController::class, 'shareStore'])->name('exam-schedule.shareStore');
+    Route::get('/exam-schedule/datatable', [ExamScheduleController::class, 'datatable'])->name('exam-schedule.datatable');
+    Route::get('/exam-schedule/destroy-all', [ExamScheduleController::class, 'destroyAll'])->name('exam-schedule.destroyAll');
+    Route::get('/exam-schedule/share/{id}', [ExamScheduleController::class, 'share'])->name('exam-schedule.share');
+    Route::resource('exam-schedule', ExamScheduleController::class);
+
+    //departement class
+    Route::get('/departement-class/datatable', [DepartementClassController::class, 'datatable'])->name('departement-class.datatable');
+    Route::get('/departement-class/destroy-all', [DepartementClassController::class, 'destroyAll'])->name('departement-class.destroyAll');
+    Route::resource('departement-class', DepartementClassController::class);
+
+    //student
+    Route::get('/student/datatable', [StudentController::class, 'datatable'])->name('student.datatable');
+    Route::get('/student/destroy-all', [StudentController::class, 'destroyAll'])->name('student.destroyAll');
+    Route::resource('student', StudentController::class);
+});
 
 //guru
-Route::middleware(['auth', 'role:guru'])->group(function () {});
-
-//user
-Route::middleware(['auth', 'role:user'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard/create', [DashboardController::class, 'create'])->name('dashboard.create');
-    Route::get('/dashboard/show', [DashboardController::class, 'show'])->name('dashboard.show');
-});
+Route::prefix('admin')->middleware(['auth', 'role:teacher'])->group(function () {});
 
 require __DIR__ . '/auth.php';
+require __DIR__ . '/auth-student.php';

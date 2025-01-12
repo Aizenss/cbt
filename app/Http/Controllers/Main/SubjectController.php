@@ -66,7 +66,7 @@ class SubjectController extends Controller
 
         $keyword = $request->search['value'] ?? null;
 
-        $data = Subject::orderBy('created_at', 'asc')->select($columns)->where(function ($query) use ($keyword, $columns) {
+        $data = Subject::orderBy('created_at', 'desc')->select($columns)->where(function ($query) use ($keyword, $columns) {
             if ($keyword != '') {
                 foreach ($columns as $column) {
                     $query->orWhere($column, 'LIKE', '%' . $keyword . '%');

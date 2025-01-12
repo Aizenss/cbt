@@ -1,30 +1,26 @@
 <?php
 
-namespace App\Http\Controllers\Main;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Imports\QuestionImport;
-use App\Models\QuestionBank;
-use App\Models\ExamBank;
+use App\Models\Student;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Hash;
 
-class QuestionBankController extends Controller
+class StudentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $examBanks = ExamBank::find($request->id);
-        return view('main.question_bank.index', compact('examBanks'));
+        //
+        return view('admin.student.index');
     }
 
     public function datatable(Request $request)
     {
-        $data = $this->getDatatable($request, $request->examBankId);
+        $data = $this->getDatatable($request);
 
         return datatables()
             ->of($data)
@@ -44,32 +40,41 @@ class QuestionBankController extends Controller
 
                 return $checkbox;
             })
-            ->addColumn('exam_bank_id', function ($data) {
-                return $data->examBank->name ?? null;
+            ->addColumn('id', function ($data) {
+                return $data->id ?? null;
             })
-            ->addColumn('subject_id', function ($data) {
-                return $data->subject->name ?? null;
+            ->addColumn('departement_class_id', function ($data) {
+                return $data->departementClass->grade_level . ' ' . $data->departementClass->alias . ' ' . $data->departementClass->identity ?? null;
             })
-            ->addColumn('question', function ($data) {
-                return $data->question ?? null;
+            ->addColumn('nisn', function ($data) {
+                return $data->nisn ?? null;
             })
-            ->addColumn('option_a', function ($data) {
-                return $data->option_a ?? null;
+            ->addColumn('nis', function ($data) {
+                return $data->nis ?? null;
             })
-            ->addColumn('option_b', function ($data) {
-                return $data->option_b ?? null;
+            ->addColumn('name', function ($data) {
+                return $data->name ?? null;
             })
-            ->addColumn('option_c', function ($data) {
-                return $data->option_c ?? null;
+            ->addColumn('gender', function ($data) {
+                return $data->getGenderAttribute($data->gender) ?? null;
             })
-            ->addColumn('option_d', function ($data) {
-                return $data->option_d ?? null;
+            ->addColumn('birth_place', function ($data) {
+                return $data->birth_place ?? null;
             })
-            ->addColumn('option_e', function ($data) {
-                return $data->option_e ?? null;
+            ->addColumn('birth_date', function ($data) {
+                return $data->birth_date ?? null;
             })
-            ->addColumn('correct_answer', function ($data) {
-                return $data->correct_answer ?? null;
+            ->addColumn('religion', function ($data) {
+                return $data->religion ?? null;
+            })
+            ->addColumn('address', function ($data) {
+                return $data->address ?? null;
+            })
+            ->addColumn('phone', function ($data) {
+                return $data->phone ?? null;
+            })
+            ->addColumn('email', function ($data) {
+                return $data->email ?? null;
             })
             ->addColumn('action', function ($data) {
                 $btn = '<div class="d-flex">';
@@ -82,31 +87,27 @@ class QuestionBankController extends Controller
             ->make(true);
     }
 
-    public function getDatatable(Request $request, $examBankId = null)
+    public function getDatatable(Request $request)
     {
         $columns = [
             'id',
-            'exam_bank_id',
-            'subject_id',
-            'question',
-            'option_a',
-            'option_b',
-            'option_c',
-            'option_d',
-            'option_e',
-            'correct_answer',
+            'departement_class_id',
+            'nisn',
+            'nis',
+            'name',
+            'gender',
+            'birth_place',
+            'birth_date',
+            'religion',
+            'address',
+            'phone',
+            'email',
             'created_at'
         ];
 
         $keyword = $request->search['value'] ?? null;
 
-        $query = QuestionBank::orderBy('created_at', 'desc')->select($columns);
-
-        if ($examBankId) {
-            $query->where('exam_bank_id', $examBankId);
-        }
-
-        $data = $query->where(function ($query) use ($keyword, $columns) {
+        $data = Student::orderBy('created_at', 'desc')->select($columns)->where(function ($query) use ($keyword, $columns) {
             if ($keyword != '') {
                 foreach ($columns as $column) {
                     $query->orWhere($column, 'LIKE', '%' . $keyword . '%');
@@ -120,11 +121,10 @@ class QuestionBankController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request)
+    public function create()
     {
         //
-        $examBanks = ExamBank::find($request->examBankId);
-        return view('main.question_bank.create', compact('examBanks'));
+        return view('admin.student.create');
     }
 
     /**
@@ -133,17 +133,18 @@ class QuestionBankController extends Controller
     public function store(Request $request)
     {
         //
-        $data = $request->all();
-        $examBank = ExamBank::find($request->examBankId);
 
         try {
-            $data['exam_bank_id'] = $examBank->id;
-            $data['subject_id'] = $examBank->subject_id;
-            $data = QuestionBank::create($data);
+            $data = $request->all();
+            $data['password'] = str_replace('-', '', $data['birth_date']);
+
+            $student = Student::create($data);
+
+            $student->assignRole('student', 'student');
 
             return response()->json([
                 'status' => true,
-                'message' => 'Data berhasil ditambahkan!',
+                'message' => 'Data Berhasil Ditambahkan!',
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -159,6 +160,9 @@ class QuestionBankController extends Controller
     public function show(string $id)
     {
         //
+        $data = Student::find($id);
+
+        return view('admin.student.show', compact('data'));
     }
 
     /**
@@ -167,8 +171,9 @@ class QuestionBankController extends Controller
     public function edit(string $id)
     {
         //
-        $data = QuestionBank::find($id);
-        return view('main.question_bank.edit', compact('data'));
+        $data = Student::find($id);
+
+        return view('admin.student.edit', compact('data'));
     }
 
     /**
@@ -177,15 +182,10 @@ class QuestionBankController extends Controller
     public function update(Request $request, string $id)
     {
         //
-        $data = $request->all();
-
         try {
-            $data = QuestionBank::find($id)->update($data);
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Data berhasil diubah!',
-            ]);
+            $data = $request->all();
+            $student = Student::find($id);
+            $student->update($data);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -201,11 +201,13 @@ class QuestionBankController extends Controller
     {
         //
         try {
-            $data = QuestionBank::find($id)->delete();
+            $student = Student::find($id);
+            $student->removeRole('student', 'student');
+            $student->delete();
 
             return response()->json([
                 'status' => true,
-                'message' => 'Data berhasil dihapus!',
+                'message' => 'Data Berhasil Dihapus!',
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -224,7 +226,7 @@ class QuestionBankController extends Controller
         }
 
         try {
-            $delete = QuestionBank::whereIn('id', $decryptedIds)->delete();
+            $delete = Student::whereIn('id', $decryptedIds)->delete();
 
             return response()->json([
                 'status' => true,
@@ -234,38 +236,6 @@ class QuestionBankController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    public function importExcel(Request $request)
-    {
-        $examBank = ExamBank::find($request->examBankId);
-        return view('main.question_bank.import_excel', compact('examBank'));
-    }
-
-    public function importExcelStore(Request $request)
-    {
-        try {
-            $examBank = ExamBank::findOrFail($request->examBankId);
-
-            DB::beginTransaction();
-
-            $import = new QuestionImport($examBank->id, $examBank->subject_id);
-            Excel::import($import, $request->file('exam_file'));
-
-            DB::commit();
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Data berhasil diimport!',
-                'total_imported' => $import->getRowCount()
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'status' => false,
-                'message' => 'Gagal mengimport data: ' . $e->getMessage()
             ], 500);
         }
     }

@@ -17,7 +17,7 @@
 
         <ul class="navbar-nav flex-row align-items-center ms-auto">
             <li class="nav-item">
-                <form action="{{ route('logout') }}" method="POST">
+                <form action="{{ route('logout-student') }}" method="POST">
                     @csrf
                     <button type="submit" class="btn text-danger" style="background-color: white;">Keluar</button>
                 </form>
