@@ -14,6 +14,7 @@ class SubjectController extends Controller
     public function index()
     {
         //
+        return view('admin.subject.index');
     }
 
     public function datatable(Request $request)
@@ -46,7 +47,6 @@ class SubjectController extends Controller
             })
             ->addColumn('action', function ($data) {
                 $btn = '<div class="d-flex">';
-                $btn .= '<a href="javascript:void(0);" class="btn btn-primary btn-sm me-1" title="Show Data" onclick="showData(\'' . $data->id . '\')"><i class="ti ti-eye"></i></a>';
                 $btn .= '<a href="javascript:void(0);" class="btn btn-primary btn-sm me-1" title="Edit Data" onclick="editData(\'' . $data->id . '\')"><i class="ti ti-pencil"></i></a>';
                 $btn .= '<a href="javascript:void(0);" class="btn btn-danger btn-sm" title="Hapus Data" onclick="deleteData(\'' . $data->id . '\')"><i class="ti ti-trash"></i></a>';
                 $btn .= '</div>';
@@ -83,7 +83,7 @@ class SubjectController extends Controller
     public function create()
     {
         //
-        return view('main.exam_bank.create');
+        return view('admin.subject.create');
     }
 
     /**
@@ -110,7 +110,7 @@ class SubjectController extends Controller
         //
         $data = Subject::find($id);
 
-        return view('main.exam_bank.show', compact('data'));
+        return view('admin.subject.show', compact('data'));
     }
 
     /**
@@ -121,7 +121,7 @@ class SubjectController extends Controller
         //
         $data = Subject::find($id);
 
-        return view('main.exam_bank.edit', compact('data'));
+        return view('admin.subject.edit', compact('data'));
     }
 
     /**

@@ -37,6 +37,18 @@
             <div data-i18n="Beranda">Beranda</div>
             </a>
         </li>
+        <li class="menu-item {{ request()->routeIs('subject.*') ? 'active' : '' }}">
+            <a href="{{route('subject.index')}}" class="menu-link">
+            <i class="menu-icon tf-icons ti ti-bookmark"></i>
+            <div data-i18n="Mata Pelajaran">Mata Pelajaran</div>
+            </a>
+        </li>
+        <li class="menu-item {{ request()->routeIs('department.*') ? 'active' : '' }}">
+            <a href="{{route('department.index')}}" class="menu-link">
+            <i class="menu-icon tf-icons ti ti-directions"></i>
+            <div data-i18n="Jurusan">Jurusan</div>
+            </a>
+        </li>
         <li class="menu-item {{ request()->routeIs('departement-class.*') ? 'active' : '' }}">
             <a href="{{route('departement-class.index')}}" class="menu-link">
             <i class="menu-icon tf-icons ti ti-book"></i>
