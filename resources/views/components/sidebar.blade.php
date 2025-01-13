@@ -60,7 +60,7 @@
                 <div data-i18n="Jadwal Ujian">Jadwal Ujian</div>
             </a>
         </li>
-        <li class="menu-item">
+        {{-- <li class="menu-item">
             <form action="{{ route('logout') }}" method="POST" class="menu-link bg-danger text-white">
                 @csrf
                 <i class="menu-icon tf-icons ti ti-door-exit"></i>
@@ -68,6 +68,6 @@
                     <div data-i18n="Keluar">Keluar</div>
                 </button>
             </form>
-        </li>
+        </li> --}}
     </ul>
 </aside>
