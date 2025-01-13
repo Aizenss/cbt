@@ -9,6 +9,7 @@ use App\Http\Controllers\Main\ExamBankController;
 use App\Http\Controllers\Main\QuestionBankController;
 use App\Http\Controllers\Main\SubjectController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\User\UserViewController;
 use Illuminate\Support\Facades\Route;
 
 //halaman awal

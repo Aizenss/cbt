@@ -72,7 +72,11 @@
     <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
 
 <body>
-    @include('components.navbar-user')
+    @if (request()->routeIs('exam.index'))
+        @stack('navbar')
+    @else
+        @include('components.navbar-user')
+    @endif
     <div class="layout-wrapper">
         <div class="layout-container">
             <!-- Navbar -->
@@ -135,6 +139,7 @@
     <script src="{{ asset('assets/vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/jquery-timepicker/jquery-timepicker.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/pickr/pickr.js') }}"></script>
+    <script src="{{ asset('assets/vendor/js/dropdown-hover.js') }}"></script>
 
     <!-- Main JS -->
     <script src="{{ asset('assets/js/main.js') }}"></script>
