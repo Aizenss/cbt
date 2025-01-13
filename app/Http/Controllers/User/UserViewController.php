@@ -11,4 +11,8 @@ class UserViewController extends Controller
     {
         return view('user.exam.index');
     }
+    public function show()
+    {
+        return view('user.exam.complete');
+    }
 }

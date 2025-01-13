@@ -75,13 +75,5 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 //guru
 Route::prefix('admin')->middleware(['auth', 'role:teacher'])->group(function () {});
 
-//user
-Route::middleware(['auth', 'role:user'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard/create', [DashboardController::class, 'create'])->name('dashboard.create');
-    Route::get('/dashboard/show', [DashboardController::class, 'show'])->name('dashboard.show');
-    Route::get('/exam', [UserViewController::class, 'index'])->name('exam.index');
-});
-
 require __DIR__ . '/auth.php';
 require __DIR__ . '/auth-student.php';
