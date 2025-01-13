@@ -60,7 +60,13 @@
                 <div data-i18n="Jadwal Ujian">Jadwal Ujian</div>
             </a>
         </li>
-        {{-- <li class="menu-item">
+        <li class="menu-item ">
+            <a href="{{ route('exam-schedule.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-calendar"></i>
+                <div data-i18n="Penilaian">Penilaian</div>
+            </a>
+        </li>
+        <li class="menu-item">
             <form action="{{ route('logout') }}" method="POST" class="menu-link bg-danger text-white">
                 @csrf
                 <i class="menu-icon tf-icons ti ti-door-exit"></i>

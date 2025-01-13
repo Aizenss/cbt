@@ -9,14 +9,21 @@
         <!-- Search -->
         <div class="navbar-nav align-items-center">
             <div class="nav-item d-flex flex-column mb-0">
-                <h3 class="fw-bold mb-0 text-white">{{ Auth::user()->name }}</h3>
+                <h5 class="fw-bold mb-0 text-white">{{ Auth::user()->name }}</h5>
+                @php
+                    $student = \App\Models\Student::where('id', Auth::user()->id)->first();
+                    $tingkat = $student->departementClass->grade_level;
+                    $jurusan = $student->departementClass->alias;
+                    $identitas = $student->departementClass->identity;
+                @endphp
+                <span class="text-white">{{ $tingkat . ' ' . $jurusan . ' ' . $identitas }}</span>
             </div>
         </div>
         <!-- /Search -->
 
         <ul class="navbar-nav flex-row align-items-center ms-auto">
             <li class="nav-item">
-                <form action="{{ route('logout') }}" method="POST">
+                <form action="{{ route('logout-student') }}" method="POST">
                     @csrf
                     <button type="submit" class="btn text-danger" style="background-color: white;">Keluar</button>
                 </form>

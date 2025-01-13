@@ -13,7 +13,7 @@
         <h5>: </h5>
     </div>
     <div class="col-6 text-start">
-        <h5> Pendidikan Jasmani, Olah Raga & Kesehatan</h5>
+        <h5> {{ $data->examSchedule->exam_title }}</h5>
     </div>
 </div>
 <hr class="mb-3">
@@ -25,7 +25,7 @@
         <h5>: </h5>
     </div>
     <div class="col-6 text-start">
-        <h5> 40 Soal</h5>
+        <h5> {{ $data->examSchedule->total_question }} Soal</h5>
     </div>
 </div>
 <hr class="mb-3">
@@ -37,15 +37,16 @@
         <h5>: </h5>
     </div>
     <div class="col-6 text-start">
-        <h5> 35 Menit</h5>
+        <h5> {{ $data->examSchedule->total_time }} Menit</h5>
     </div>
 </div>
 <hr class="mb-3">
 <div class="d-flex justify-content-center">
-    <button class="btn btn-warning btn-md" onclick="startExam()">Mulai mengerjakan<i class="fa fa-arrow-right ms-2"></i></button>
+    <button class="btn btn-warning btn-md" onclick="startExam({{$data->examSchedule->id}})">Mulai mengerjakan<i class="fa fa-arrow-right ms-2"></i></button>
 </div>
+
 <script>
-    function startExam() {
-        window.location.href = "{{ route('exam.index') }}";
+    function startExam(id) {
+        window.location.href = "{{ route('exam.index', ':id') }}".replace(':id', id);
     }
 </script>
