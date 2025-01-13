@@ -91,9 +91,6 @@
 
             <!-- Layout container -->
             <div class="layout-page">
-                <!-- Navbar -->
-                @include('components.navbar')
-                <!-- / Navbar -->
 
                 <!-- Content wrapper -->
                 <div class="content-wrapper">
