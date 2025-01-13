@@ -44,3 +44,8 @@
 <div class="d-flex justify-content-center">
     <button class="btn btn-warning btn-md" onclick="startExam()">Mulai mengerjakan<i class="fa fa-arrow-right ms-2"></i></button>
 </div>
+<script>
+    function startExam() {
+        window.location.href = "{{ route('exam.index') }}";
+    }
+</script>

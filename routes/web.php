@@ -6,6 +6,7 @@ use App\Http\Controllers\Main\ExamBankController;
 use App\Http\Controllers\Main\QuestionBankController;
 use App\Http\Controllers\Main\SubjectController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\User\UserViewController;
 use Illuminate\Support\Facades\Route;
 
 //halaman awal
@@ -58,6 +59,7 @@ Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/create', [DashboardController::class, 'create'])->name('dashboard.create');
     Route::get('/dashboard/show', [DashboardController::class, 'show'])->name('dashboard.show');
+    Route::get('/exam', [UserViewController::class, 'index'])->name('exam.index');
 });
 
 require __DIR__ . '/auth.php';
