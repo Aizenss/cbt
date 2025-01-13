@@ -52,8 +52,8 @@
                                     <th>Nama Siswa</th>
                                     <th>Kelas</th>
                                     <th>NIS</th>
-                                    <th>Status Pengerjaan</th>
-                                    <th>Aksi</th>
+                                    {{-- <th>Status Pengerjaan</th>
+                                    <th>Aksi</th> --}}
                                 </tr>
                             </thead>
                         </table>
@@ -150,16 +150,6 @@
                         data: 'nis',
                         name: 'nis'
                     },
-                    {
-                        data: 'nis',
-                        name: 'nis'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    }
                 ]
             });
         }

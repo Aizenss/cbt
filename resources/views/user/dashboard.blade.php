@@ -40,16 +40,20 @@
                                         Menit</button>
                                 </div>
                             </div>
-                            <button class="btn btn-warning text-nowrap mt-3"
-                                onclick="openModal({{ $item->id }})">Kerjakan<i
-                                    class="fa fa-arrow-right ms-2"></i></button>
+                            <button
+                                class="btn {{ $item->answered_questions == $item->examSchedule->total_question ? 'btn-success disabled' : 'btn-warning' }} text-nowrap mt-3"
+                                onclick="openModal({{ $item->id }})"
+                                {{ $item->answered_questions == $item->examSchedule->total_question ? 'disabled' : '' }}>
+                                {{ $item->answered_questions == $item->examSchedule->total_question ? 'Selesai' : 'Kerjakan' }}
+                                <i
+                                    class="fa {{ $item->answered_questions == $item->examSchedule->total_question ? 'fa-check' : 'fa-arrow-right' }} ms-2"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
             @empty
                 <div class="text-center">
-                    <img src="{{ asset('images/empty.png') }}" alt="No Data" class="img-fluid"
-                        style="max-width: 300px;">
+                    <img src="{{ asset('images/empty.png') }}" alt="No Data" class="img-fluid" style="max-width: 300px;">
                     <h4 class="mt-4 text-muted">Belum Ada Pelajaran</h4>
                     <p class="text-muted">Silahkan hubungi guru atau administrator anda untuk mendapatkan akses ke
                         pelajaran.</p>
