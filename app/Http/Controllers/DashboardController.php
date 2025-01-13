@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ExamSchedule;
+use App\Models\ShareExam;
+use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     //
     public function index()
     {
-        return view('user.dashboard');
+        $student = Student::where('id', Auth::user()->id)->first();
+        $class = ShareExam::where('class_id', $student->departement_class_id)->get();
+        return view('user.dashboard', compact('class'));
     }
     public function indexAdmin()
     {
@@ -20,8 +26,9 @@ class DashboardController extends Controller
     {
         //
     }
-    public function show()
+    public function show(Request $request)
     {
-        return view('user.detail');
+        $data = ShareExam::where('id', $request->data)->first();
+        return view('user.detail', compact('data'));
     }
 }

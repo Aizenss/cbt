@@ -183,6 +183,14 @@ class ExamScheduleController extends Controller
         //
         try {
             $data = $request->all();
+            $ExamBank = ExamBank::findOrFail($data['exam_bank_id']);
+            if ($ExamBank->grade_level != $data['grade_level']) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Bank ujian ' . $ExamBank->subject->name . ' dengan tingkat kelas ' . $data['grade_level'] . ' tidak ditemukan'
+                ]);
+            }
+            $data['total_question'] = QuestionBank::where('exam_bank_id', $ExamBank->id)->count();
             ExamSchedule::find($id)->update($data);
             return response()->json([
                 'status' => true,

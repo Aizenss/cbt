@@ -184,8 +184,14 @@ class StudentController extends Controller
         //
         try {
             $data = $request->all();
+            $data['password'] = str_replace('-', '', $data['birth_date']);
             $student = Student::find($id);
             $student->update($data);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data Berhasil Diubah!',
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,

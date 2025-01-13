@@ -130,47 +130,49 @@
         </div>
         <div class="d-flex gap-4">
             <div>
-                <strong style="font-size: 25px;">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quaerat ullam
-                    facilis vitae delectus amet corporis distinctio odio aperiam quod asperiores. Debitis ipsum nobis
-                    voluptatum quaerat voluptates expedita dolor, magni nisi.</strong>
-            </div>
-            <div>
-                <img src="{{ asset('images/mapel_basic.png') }}" width="300" alt="">
+                <strong style="font-size: 25px;">{{ $questions[$currentQuestion]->question }}</strong>
             </div>
         </div>
         <div class="option-container">
-            <div class="option" data-value="option1">
-                <input type="radio" name="options" id="option-1" hidden>
-                <label for="option-1">
-                    <h4 class="m-0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque, libero eos culpa vel
-                        dolorum dignissimos voluptatum voluptates officia harum voluptatibus.</h4>
-            </div>
-            <div class="option" data-value="option2">
-                <input type="radio" name="options" id="option-2" hidden>
-                <label for="option-2">
-                    <h4 class="m-0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde, odio?</h4>
+            <div class="option" data-value="A">
+                <input type="radio" name="options" id="option-a" value="option_a" hidden>
+                <label for="option-a">
+                    <h4 class="m-0">{{ $questions[$currentQuestion]->option_a }}</h4>
                 </label>
             </div>
-            <div class="option" data-value="option3">
-                <input type="radio" name="options" id="option-3" hidden>
-                <label for="option-3">
-                    <h4 class="m-0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque, libero eos culpa vel
-                        dolorum dignissimos voluptatum voluptates officia harum voluptatibus.</h4>
-            </div>
-            <div class="option" data-value="option4">
-                <input type="radio" name="options" id="option-4" hidden>
-                <label for="option-4">
-                    <h4 class="m-0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde, odio?</h4>
+            <div class="option" data-value="B">
+                <input type="radio" name="options" id="option-b" value="option_b" hidden>
+                <label for="option-b">
+                    <h4 class="m-0">{{ $questions[$currentQuestion]->option_b }}</h4>
                 </label>
             </div>
+            <div class="option" data-value="C">
+                <input type="radio" name="options" id="option-c" value="option_c" hidden>
+                <label for="option-c">
+                    <h4 class="m-0">{{ $questions[$currentQuestion]->option_c }}</h4>
+                </label>
+            </div>
+            <div class="option" data-value="D">
+                <input type="radio" name="options" id="option-d" value="option_d" hidden>
+                <label for="option-d">
+                    <h4 class="m-0">{{ $questions[$currentQuestion]->option_d }}</h4>
+                </label>
+            </div>
+            @if($questions[$currentQuestion]->option_e)
+            <div class="option" data-value="E">
+                <input type="radio" name="options" id="option-e" value="option_e" hidden>
+                <label for="option-e">
+                    <h4 class="m-0">{{ $questions[$currentQuestion]->option_e }}</h4>
+                </label>
+            </div>
+            @endif
         </div>
         <div class="d-flex justify-content-between align-items-center my-5">
-            <button class="btn btn-outline-primary btn-md">Kembali</button>
-            <h5 class="fw-bold m-0">15 / 30</h5>
-            <button class="btn btn-primary btn-md">Lanjut</button>
-            <button class="btn btn-primary btn-md" onclick="completed()">Selesai</button>
+            <button class="btn btn-outline-primary btn-md" onclick="previousQuestion()" {{ $currentQuestion == 0 ? 'disabled' : '' }}>Kembali</button>
+            <h5 class="fw-bold m-0">{{ $currentQuestion + 1 }} / {{ count($questions) }}</h5>
+            <button class="btn btn-primary btn-md" onclick="saveAndNext()">{{ $currentQuestion + 1 == count($questions) ? 'Selesai' : 'Lanjut' }}</button>
         </div>
-        
+
         <div class="modal fade" id="modal-ce" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-simple">
                 <div class="modal-content p-3 p-md-5">
@@ -180,36 +182,127 @@
                 </div>
             </div>
         </div>
-    @endsection
-    @push('js')
-        <script>
-            function completed() {
-                $.ajax({
-                        url: "{{ route('exam.show') }}",
-                        type: 'GET',
-                    })
-                    .done(function(data) {
-                        $('#content-modal-ce').html(data);
+    </div>
+@endsection
+@push('js')
+    <script>
+        let currentQuestion = {{ $currentQuestion }};
+        const totalQuestions = {{ count($questions) }};
 
-                        $("#modal-ce").modal("show");
-                    })
-                    .fail(function() {
-                        Swal.fire('Error!', 'An error occurred while creating the record.', 'error');
-                    });
-            }
-
-            document.addEventListener("DOMContentLoaded", function() {
-                const options = document.querySelectorAll(".option");
-
-                options.forEach(option => {
-                    const input = option.querySelector("input");
-                    option.addEventListener("click", function() {
-                        input.checked = true;
-
-                        options.forEach(opt => opt.classList.remove("selected"));
-                        option.classList.add("selected");
-                    });
+        // Tambahkan fungsi untuk menangani pemilihan jawaban
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                // Hapus kelas selected dari semua opsi
+                document.querySelectorAll('.option').forEach(opt => {
+                    opt.classList.remove('selected');
                 });
+
+                // Tambahkan kelas selected ke opsi yang dipilih
+                this.classList.add('selected');
+
+                // Check radio button yang sesuai
+                const value = this.dataset.value;
+                document.querySelector(`#option-${value.toLowerCase()}`).checked = true;
             });
-        </script>
-    @endpush
+        });
+
+        // Fungsi untuk memuat jawaban yang sudah disimpan sebelumnya
+        function loadSavedAnswer() {
+            $.ajax({
+                url: "{{ route('exam.get-answer') }}", // Anda perlu membuat route ini
+                type: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    schedule_id: "{{ $schedule->id }}",
+                    question_id: "{{ $questions[$currentQuestion]->id }}"
+                },
+                success: function(response) {
+                    if (response.answer) {
+                        const savedOption = document.querySelector(`.option[data-value="${response.answer}"]`);
+                        if (savedOption) {
+                            savedOption.classList.add('selected');
+                            document.querySelector(`#option-${response.answer.toLowerCase()}`).checked = true;
+                        }
+                    }
+
+                    // Set status ragu-ragu
+                    if (response.is_flagged) {
+                        document.querySelector('.switch-input').checked = true;
+                    }
+                }
+            });
+        }
+
+        // Panggil fungsi saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', loadSavedAnswer);
+
+        function completed() {
+            Swal.fire({
+                title: 'Selesai!',
+                text: 'Anda telah menyelesaikan semua soal ujian',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "{{ route('dashboard') }}";
+                }
+            });
+        }
+
+        function saveAndNext() {
+            const answer = document.querySelector('input[name="options"]:checked')?.value;
+            const isFlagged = document.querySelector('.switch-input').checked;
+
+            $.ajax({
+                url: "{{ route('exam.save-answer') }}",
+                type: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    schedule_id: "{{ $schedule->id }}",
+                    question_id: "{{ $questions[$currentQuestion]->id }}",
+                    answer: answer,
+                    is_flagged: isFlagged,
+                    next_question: currentQuestion + 1
+                },
+                success: function(response) {
+                    if (currentQuestion + 1 < totalQuestions) {
+                        Swal.fire({
+                            title: 'Berhasil!',
+                            text: 'Jawaban berhasil disimpan',
+                            icon: 'success',
+                            timer: 1000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        completed();
+                    }
+                },
+                error: function() {
+                    Swal.fire('Error!', 'Gagal menyimpan jawaban.', 'error');
+                }
+            });
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                $.ajax({
+                    url: "{{ route('exam.save-answer') }}",
+                    type: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        schedule_id: "{{ $schedule->id }}",
+                        question_id: "{{ $questions[$currentQuestion]->id }}",
+                        answer: document.querySelector('input[name="options"]:checked')?.value,
+                        is_flagged: document.querySelector('.switch-input').checked,
+                        next_question: currentQuestion - 1
+                    },
+                    success: function(response) {
+                        window.location.reload();
+                    }
+                });
+            }
+        }
+    </script>
+@endpush
