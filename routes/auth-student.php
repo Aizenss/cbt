@@ -21,6 +21,8 @@ Route::middleware('auth:student')->group(function () {
         Route::get('/exam/complete', [UserViewController::class, 'show'])->name('exam.show');
         Route::post('/exam/save-answer', [UserViewController::class, 'saveAnswer'])->name('exam.save-answer');
         Route::post('/exam/get-answer', [UserViewController::class, 'getAnswer'])->name('exam.get-answer');
+        Route::post('/exam/clear-session', [UserViewController::class, 'clearSession'])->name('exam.clear-session');
+        Route::post('/exam/get-all-answers', [UserViewController::class, 'getAllAnswers'])->name('exam.get-all-answers');
     });
     Route::post('logout', [LoginController::class, 'destroy'])
         ->name('logout-student');

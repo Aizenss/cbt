@@ -47,15 +47,16 @@
             <!-- Search -->
             <div class="navbar-nav align-items-center">
                 <div class="nav-item d-flex flex-column mb-0">
-                    <h5 class="fw-bold mb-0 text-white text-nowrap">Pendidikan Jasmani, Olah Raga & Kesehatan</h5>
+                    <h5 class="fw-bold mb-0 text-white text-nowrap">{{ $schedule->exam_title }}</h5>
                 </div>
             </div>
             <!-- /Search -->
 
             <ul class="navbar-nav flex-row align-items-center ms-auto">
                 <li class="nav-item">
-                    <button class="btn btn-md text-center me-3" style="background-color: white;"><span class="fw-bold m-0"
-                            style="font-size: 18px;">30:00</span></button>
+                    <button class="btn btn-md text-center me-3" style="background-color: white;">
+                        <span class="fw-bold m-0" style="font-size: 18px;" id="timer">00:00</span>
+                    </button>
                 </li>
                 <li class="nav-item dropdown-language dropdown me-2 me-xl-0">
                     <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
@@ -64,40 +65,18 @@
                     <div class="dropdown-menu dropdown-menu-end p-3" style="min-width: 300px;">
                         <h3 class="mb-3 fw-bold">Nomer Soal</h3>
                         <div class="row gap-3">
-                            <div class="col-2">
-                                <button class="btn btn-primary text-nowrap text-center">1</button>
-                            </div>
-                            <div class="col-2">
-                                <button class="btn btn-primary text-nowrap text-center">2</button>
-                            </div>
-                            <div class="col-2">
-                                <button class="btn btn-primary text-nowrap text-center">3</button>
-                            </div>
-                            <div class="col-2">
-                                <button class="btn btn-primary text-nowrap text-center">4</button>
-                            </div>
-                            <div class="col-2">
-                                <button class="btn btn-primary text-nowrap text-center">5</button>
-                            </div>
+                            @foreach ($questions as $index => $question)
+                                <div class="col-2">
+                                    <button
+                                        class="btn {{ $index == $currentQuestion ? 'btn-success' : 'btn-primary' }} question-number text-nowrap text-center"
+                                        data-question="{{ $index }}">{{ $index + 1 }}</button>
+                                </div>
+                            @endforeach
                         </div>
                         <hr class="mb-2 mt-4">
                         <h3 class="mb-3 fw-bold">Ditandai</h3>
-                        <div class="row gap-3">
-                            <div class="col-2">
-                                <button class="btn btn-warning text-nowrap text-center">1</button>
-                            </div>
-                            <div class="col-2">
-                                <button class="btn btn-warning text-nowrap text-center">2</button>
-                            </div>
-                            <div class="col-2">
-                                <button class="btn btn-warning text-nowrap text-center">3</button>
-                            </div>
-                            <div class="col-2">
-                                <button class="btn btn-warning text-nowrap text-center">4</button>
-                            </div>
-                            <div class="col-2">
-                                <button class="btn btn-warning text-nowrap text-center">5</button>
-                            </div>
+                        <div class="row gap-3" id="flagged-questions">
+                            <!-- Akan diisi secara dinamis via JavaScript -->
                         </div>
                     </div>
                 </li>
@@ -158,19 +137,19 @@
                     <h4 class="m-0">{{ $questions[$currentQuestion]->option_d }}</h4>
                 </label>
             </div>
-            @if($questions[$currentQuestion]->option_e)
             <div class="option" data-value="E">
                 <input type="radio" name="options" id="option-e" value="option_e" hidden>
                 <label for="option-e">
                     <h4 class="m-0">{{ $questions[$currentQuestion]->option_e }}</h4>
                 </label>
             </div>
-            @endif
         </div>
         <div class="d-flex justify-content-between align-items-center my-5">
-            <button class="btn btn-outline-primary btn-md" onclick="previousQuestion()" {{ $currentQuestion == 0 ? 'disabled' : '' }}>Kembali</button>
+            <button class="btn btn-outline-primary btn-md" onclick="previousQuestion()"
+                {{ $currentQuestion == 0 ? 'disabled' : '' }}>Kembali</button>
             <h5 class="fw-bold m-0">{{ $currentQuestion + 1 }} / {{ count($questions) }}</h5>
-            <button class="btn btn-primary btn-md" onclick="saveAndNext()">{{ $currentQuestion + 1 == count($questions) ? 'Selesai' : 'Lanjut' }}</button>
+            <button class="btn btn-primary btn-md"
+                onclick="saveAndNext()">{{ $currentQuestion + 1 == count($questions) ? 'Selesai' : 'Lanjut' }}</button>
         </div>
 
         <div class="modal fade" id="modal-ce" tabindex="-1" aria-hidden="true">
@@ -203,13 +182,17 @@
                 // Check radio button yang sesuai
                 const value = this.dataset.value;
                 document.querySelector(`#option-${value.toLowerCase()}`).checked = true;
+                const radioInput = document.querySelector(`#option-${value.toLowerCase()}`);
+                if (radioInput) {
+                    radioInput.checked = true;
+                }
             });
         });
 
         // Fungsi untuk memuat jawaban yang sudah disimpan sebelumnya
         function loadSavedAnswer() {
             $.ajax({
-                url: "{{ route('exam.get-answer') }}", // Anda perlu membuat route ini
+                url: "{{ route('exam.get-answer') }}",
                 type: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}",
@@ -218,40 +201,313 @@
                 },
                 success: function(response) {
                     if (response.answer) {
-                        const savedOption = document.querySelector(`.option[data-value="${response.answer}"]`);
+                        const optionLetter = response.answer.slice(-1).toUpperCase();
+                        const savedOption = document.querySelector(`.option[data-value="${optionLetter}"]`);
                         if (savedOption) {
                             savedOption.classList.add('selected');
-                            document.querySelector(`#option-${response.answer.toLowerCase()}`).checked = true;
+                            // document.querySelector(`#option-${response.answer.toLowerCase()}`).checked = true;
                         }
                     }
 
                     // Set status ragu-ragu
-                    if (response.is_flagged) {
-                        document.querySelector('.switch-input').checked = true;
-                    }
+                    document.querySelector('.switch-input').checked = response.is_flagged;
                 }
             });
         }
 
         // Panggil fungsi saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', loadSavedAnswer);
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedAnswer();
+            loadFlaggedQuestions();
 
+            // Tambahkan event listener untuk switch ragu-ragu
+            document.querySelector('.switch-input').addEventListener('change', function() {
+                const questionNumber = currentQuestion + 1;
+                const button = document.querySelector(
+                    `.question-number[data-question="${currentQuestion}"]`);
+
+                updateFlaggedQuestions();
+            });
+        });
+
+        // Tambahkan kode timer
+        const endTime = {{ session('exam_end_time') }};
+        const canBeCompletedTime = {{ $schedule->can_be_completed_time }};
+        let timerInterval;
+
+        function updateTimer() {
+            const now = Math.floor(Date.now() / 1000);
+            const timeLeft = endTime - now;
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+
+                // Tambahkan AJAX call untuk menghapus session
+                $.ajax({
+                    url: "{{ route('exam.clear-session') }}",
+                    type: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function() {
+                        Swal.fire({
+                            title: 'Waktu Habis!',
+                            text: 'Waktu ujian telah selesai',
+                            icon: 'warning',
+                            allowOutsideClick: false,
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            window.location.href = "{{ route('dashboard') }}";
+                        });
+                    }
+                });
+                return;
+            }
+
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').textContent =
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Jalankan timer
+        timerInterval = setInterval(updateTimer, 1000);
+        updateTimer();
+
+        // Modifikasi fungsi completed
         function completed() {
-            Swal.fire({
-                title: 'Selesai!',
-                text: 'Anda telah menyelesaikan semua soal ujian',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = "{{ route('dashboard') }}";
+            const now = Math.floor(Date.now() / 1000);
+            const examDuration = endTime - now;
+
+            if (examDuration > (canBeCompletedTime * 60)) {
+                Swal.fire({
+                    title: 'Peringatan!',
+                    text: 'Anda harus menunggu pada waktu ' + canBeCompletedTime +
+                        ' menit sebelum menyelesaikan ujian',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            // Periksa soal yang ditandai sebelum menyelesaikan
+            $.ajax({
+                url: "{{ route('exam.get-all-answers') }}",
+                type: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    schedule_id: "{{ $schedule->id }}"
+                },
+                success: function(response) {
+                    const flaggedQuestions = response.answers.filter(answer => answer.is_flagged);
+
+                    if (flaggedQuestions.length > 0) {
+                        Swal.fire({
+                            title: 'Peringatan!',
+                            text: 'Masih ada ' + flaggedQuestions.length +
+                                ' soal yang ditandai ragu-ragu. Harap periksa kembali jawaban Anda.',
+                            icon: 'warning',
+                            confirmButtonText: 'OK'
+                        });
+                        return;
+                    }
+
+                    // Tampilkan konfirmasi sebelum menyelesaikan
+                    Swal.fire({
+                        title: 'Konfirmasi',
+                        text: 'Apakah Anda yakin ingin menyelesaikan ujian?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, Selesaikan',
+                        cancelButtonText: 'Tidak, Kembali',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Lanjutkan dengan proses penyelesaian
+                            $.ajax({
+                                url: "{{ route('exam.clear-session') }}",
+                                type: 'POST',
+                                data: {
+                                    _token: "{{ csrf_token() }}"
+                                },
+                                success: function() {
+                                    Swal.fire({
+                                        title: 'Selesai!',
+                                        text: 'Anda telah menyelesaikan semua soal ujian',
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            window.location.href =
+                                                "{{ route('dashboard') }}";
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
                 }
             });
         }
 
         function saveAndNext() {
-            const answer = document.querySelector('input[name="options"]:checked')?.value;
-            const isFlagged = document.querySelector('.switch-input').checked;
+            const selectedAnswer = document.querySelector('input[name="options"]:checked')?.value;
+            const isFlagged = document.querySelector('.switch-input').checked ? 1 : 0;
+
+            $.ajax({
+                url: "{{ route('exam.get-answer') }}",
+                type: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    schedule_id: "{{ $schedule->id }}",
+                    question_id: "{{ $questions[$currentQuestion]->id }}"
+                },
+                success: function(previousAnswer) {
+                    const finalAnswer = selectedAnswer || previousAnswer.answer;
+
+                    $.ajax({
+                        url: "{{ route('exam.save-answer') }}",
+                        type: 'POST',
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            schedule_id: "{{ $schedule->id }}",
+                            question_id: "{{ $questions[$currentQuestion]->id }}",
+                            answer: finalAnswer,
+                            is_flagged: isFlagged,
+                            next_question: currentQuestion + 1
+                        },
+                        success: function(response) {
+                            if (currentQuestion + 1 < totalQuestions) {
+                                window.location.reload();
+                            } else {
+                                completed();
+                            }
+                        },
+                        error: function() {
+                            Swal.fire('Error!', 'Gagal menyimpan jawaban.', 'error');
+                        }
+                    });
+                }
+            });
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                const selectedAnswer = document.querySelector('input[name="options"]:checked')?.value;
+                const isFlagged = document.querySelector('.switch-input').checked ? 1 : 0;
+
+                $.ajax({
+                    url: "{{ route('exam.get-answer') }}",
+                    type: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        schedule_id: "{{ $schedule->id }}",
+                        question_id: "{{ $questions[$currentQuestion]->id }}"
+                    },
+                    success: function(previousAnswer) {
+                        const finalAnswer = selectedAnswer || previousAnswer.answer;
+
+                        $.ajax({
+                            url: "{{ route('exam.save-answer') }}",
+                            type: 'POST',
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                schedule_id: "{{ $schedule->id }}",
+                                question_id: "{{ $questions[$currentQuestion]->id }}",
+                                answer: finalAnswer,
+                                is_flagged: isFlagged,
+                                next_question: currentQuestion - 1
+                            },
+                            success: function(response) {
+                                window.location.reload();
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        // Tambahkan fungsi baru untuk memuat soal yang ditandai
+        function loadFlaggedQuestions() {
+            $.ajax({
+                url: "{{ route('exam.get-all-answers') }}",
+                type: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    schedule_id: "{{ $schedule->id }}"
+                },
+                success: function(response) {
+                    updateQuestionButtons(response.answers);
+                    updateFlaggedQuestions(response.answers);
+                }
+            });
+        }
+
+        // Fungsi untuk memperbarui tampilan tombol nomor soal
+        function updateQuestionButtons(answers) {
+            answers.forEach(answer => {
+                const button = document.querySelector(`.question-number[data-question="${answer.question_index}"]`);
+                if (button) {
+                    // Reset class terlebih dahulu
+                    button.classList.remove('btn-primary', 'btn-success', 'btn-warning', 'btn-light');
+
+                    if (answer.is_flagged) {
+                        // Jika soal ditandai
+                        button.classList.add('btn-warning');
+                    } else if (answer.answer) {
+                        // Jika sudah dijawab (answer tidak null)
+                        button.classList.add('btn-primary');
+                    } else {
+                        // Jika belum dijawab
+                        button.classList.add('btn-light');
+                        button.style.border = '1px solid #dee2e6';
+                    }
+
+                    // Khusus untuk soal yang sedang aktif
+                    if (answer.question_index === currentQuestion) {
+                        button.classList.remove('btn-light', 'btn-primary');
+                        button.classList.add('btn-success');
+                    }
+                }
+            });
+        }
+
+        // Fungsi untuk memperbarui daftar soal yang ditandai
+        function updateFlaggedQuestions(answers) {
+            const container = document.getElementById('flagged-questions');
+            container.innerHTML = '';
+
+            if (!answers) return;
+
+            answers.filter(answer => answer.is_flagged).forEach(answer => {
+                const div = document.createElement('div');
+                div.className = 'col-2';
+
+                const buttonClass = answer.answer ? 'btn-warning' : 'btn-light border';
+
+                div.innerHTML = `
+                    <button class="btn ${buttonClass} question-number text-nowrap text-center"
+                            data-question="${answer.question_index}"
+                            onclick="goToQuestion(${answer.question_index})">
+                        ${answer.question_index + 1}
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Tambahkan event listener untuk tombol nomor soal di navbar
+        document.querySelectorAll('.question-number').forEach(button => {
+            button.addEventListener('click', function() {
+                const questionIndex = parseInt(this.dataset.question);
+                goToQuestion(questionIndex);
+            });
+        });
+
+        // Perbaikan fungsi goToQuestion
+        function goToQuestion(questionIndex) {
+            const selectedAnswer = document.querySelector('input[name="options"]:checked')?.value;
+            const isFlagged = document.querySelector('.switch-input').checked ? 1 : 0;
 
             $.ajax({
                 url: "{{ route('exam.save-answer') }}",
@@ -259,50 +515,29 @@
                 data: {
                     _token: "{{ csrf_token() }}",
                     schedule_id: "{{ $schedule->id }}",
-                    question_id: "{{ $questions[$currentQuestion]->id }}",
-                    answer: answer,
-                    is_flagged: isFlagged,
-                    next_question: currentQuestion + 1
+                    question_id: "{{ $questions[$currentQuestion]->id }}"
                 },
-                success: function(response) {
-                    if (currentQuestion + 1 < totalQuestions) {
-                        Swal.fire({
-                            title: 'Berhasil!',
-                            text: 'Jawaban berhasil disimpan',
-                            icon: 'success',
-                            timer: 1000,
-                            showConfirmButton: false
-                        }).then(() => {
+                success: function(previousAnswer) {
+                    const finalAnswer = selectedAnswer || previousAnswer.answer;
+
+                    // Simpan jawaban saat ini sebelum pindah
+                    $.ajax({
+                        url: "{{ route('exam.save-answer') }}",
+                        type: 'POST',
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            schedule_id: "{{ $schedule->id }}",
+                            question_id: "{{ $questions[$currentQuestion]->id }}",
+                            answer: finalAnswer,
+                            is_flagged: isFlagged,
+                            next_question: questionIndex
+                        },
+                        success: function(response) {
                             window.location.reload();
-                        });
-                    } else {
-                        completed();
-                    }
-                },
-                error: function() {
-                    Swal.fire('Error!', 'Gagal menyimpan jawaban.', 'error');
+                        }
+                    });
                 }
             });
-        }
-
-        function previousQuestion() {
-            if (currentQuestion > 0) {
-                $.ajax({
-                    url: "{{ route('exam.save-answer') }}",
-                    type: 'POST',
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        schedule_id: "{{ $schedule->id }}",
-                        question_id: "{{ $questions[$currentQuestion]->id }}",
-                        answer: document.querySelector('input[name="options"]:checked')?.value,
-                        is_flagged: document.querySelector('.switch-input').checked,
-                        next_question: currentQuestion - 1
-                    },
-                    success: function(response) {
-                        window.location.reload();
-                    }
-                });
-            }
         }
     </script>
 @endpush
