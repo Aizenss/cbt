@@ -25,7 +25,7 @@
                 <div class="col-12 col-md-4">
                     <div class="card card-mapel">
                         <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                            <img src="{{ asset('images/mapel_basic.png') }}" class="img-mapel" alt="">
+                            <img src="{{ asset('images/mapel_basic.png') }}" class="img-mapel" style="{{ $item->answered_questions == $item->examSchedule->total_question ? 'filter: grayscale(100%);' : '' }}" alt="">
                             <h3 class="fw-bold mt-3 mb-1 text-center" style="height: 80px;">
                                 {{ $item->examSchedule->exam_title }}</h3>
                             <div class="row">
@@ -45,8 +45,7 @@
                                 onclick="openModal({{ $item->id }})"
                                 {{ $item->answered_questions == $item->examSchedule->total_question ? 'disabled' : '' }}>
                                 {{ $item->answered_questions == $item->examSchedule->total_question ? 'Selesai' : 'Kerjakan' }}
-                                <i
-                                    class="fa {{ $item->answered_questions == $item->examSchedule->total_question ? 'fa-check' : 'fa-arrow-right' }} ms-2"></i>
+                                <i class="fa {{ $item->answered_questions == $item->examSchedule->total_question ? 'fa-lock' : 'fa-arrow-right' }} ms-2"></i>
                             </button>
                         </div>
                     </div>

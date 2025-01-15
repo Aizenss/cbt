@@ -66,14 +66,5 @@
                 <div data-i18n="Penilaian">Penilaian</div>
             </a>
         </li>
-        <li class="menu-item">
-            <form action="{{ route('logout') }}" method="POST" class="menu-link bg-danger text-white">
-                @csrf
-                <i class="menu-icon tf-icons ti ti-door-exit"></i>
-                <button type="submit" style="background: none; border: none; padding: 0; cursor: pointer; color: #fff;">
-                    <div data-i18n="Keluar">Keluar</div>
-                </button>
-            </form>
-        </li> --}}
     </ul>
 </aside>
