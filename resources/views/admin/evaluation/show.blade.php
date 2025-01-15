@@ -4,22 +4,18 @@
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="py-3 mb-4"><span class="text-muted fw-light">Halaman Siswa /</span> Home</h4>
+        <h4 class="py-3 mb-4"><span class="text-muted fw-light">Halaman Soal Ujian /</span> </h4>
 
         <div class="card">
             <div class="card-header d-flex align-items-center justify-content-between   ">
-                <h5 class="card-title mb-0">Siswa</h5>
+                <h5 class="card-title mb-0">Soal Ujian</h5>
                 <div class="d-flex justify-content-end align-items-center gap-2">
                     <!-- Tombol Hapus Masal -->
                     <button type="button" class="btn btn-danger" id="delete-btn" style="display: none !important;">
                         <i class="fas fa-trash-alt"></i> Hapus Masal
                     </button>
-                    {{-- button import excel --}}
-                    <button type="button" class="btn btn-success btn-sm" onclick="importExcel()">
-                        <i class="fas fa-file-excel"></i> Import Excel
-                    </button>
                     <!-- Tombol Tambah -->
-                    <button type="button" class="btn btn-primary btn-sm" onclick="createData()">
+                    <button type="button" class="btn btn-primary" onclick="createData()">
                         <i class="fas fa-plus"></i> Tambah
                     </button>
                 </div>
@@ -33,17 +29,7 @@
                                     <input class="form-check-input" type="checkbox" id="checkAll" />
                                 </div>
                             </th>
-                            <th>Nama</th>
-                            <th>Kelas</th>
-                            <th>NIS</th>
-                            <th>NISN</th>
-                            <th>Jenis Kelamin</th>
-                            <th>Tempat Lahir</th>
-                            <th>Tanggal Lahir</th>
-                            <th>Agama</th>
-                            <th>Alamat</th>
-                            <th>No. Telp</th>
-                            <th>Email</th>
+                            <th>Soal</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -115,7 +101,7 @@
 
                 ajax: {
                     type: "GET",
-                    url: "{{ route('student.datatable') }}",
+                    url: "{{ route('exam-bank.datatable') }}",
                     data: {
                         'keyword': keyword
                     }
@@ -127,48 +113,8 @@
                         searchable: false
                     },
                     {
-                        data: 'name',
-                        name: 'name'
-                    },
-                    {
-                        data: 'departement_class_id',
-                        name: 'departement_class_id'
-                    },
-                    {
-                        data: 'nis',
-                        name: 'nis'
-                    },
-                    {
-                        data: 'nisn',
-                        name: 'nisn'
-                    },
-                    {
-                        data: 'gender',
-                        name: 'gender'
-                    },
-                    {
-                        data: 'birth_place',
-                        name: 'birth_place'
-                    },
-                    {
-                        data: 'birth_date',
-                        name: 'birth_date'
-                    },
-                    {
-                        data: 'religion',
-                        name: 'religion'
-                    },
-                    {
-                        data: 'address',
-                        name: 'address'
-                    },
-                    {
-                        data: 'phone',
-                        name: 'phone'
-                    },
-                    {
-                        data: 'email',
-                        name: 'email'
+                        data: 'question',
+                        name: 'question'
                     },
                     {
                         data: 'action',
@@ -182,7 +128,7 @@
 
         function createData() {
             $.ajax({
-                    url: "{{ route('student.create') }}",
+                    url: "{{ route('exam-bank.create') }}",
                     type: 'GET',
                 })
                 .done(function(data) {
@@ -198,7 +144,7 @@
         function editData(id) {
 
             $.ajax({
-                    url: "{{ route('student.edit', ':id') }}".replace(':id', id),
+                    url: "{{ route('exam-bank.edit', ':id') }}".replace(':id', id),
                     type: 'GET',
                 })
                 .done(function(data) {
@@ -212,7 +158,17 @@
         }
 
         function showData(id) {
-            window.location.href = "{{ route('student.show', ':id') }}".replace(':id', id);
+
+            $.ajax({
+                    url: "{{ route('exam-bank.show', ':id') }}".replace(':id', id),
+                    type: 'GET',
+                })
+                .done(function(data) {
+                    window.location.href = "{{ route('exam-bank.show', ':id') }}".replace(':id', id);
+                })
+                .fail(function() {
+                    Swal.fire('Error!', 'An error occurred while editing the record.', 'error');
+                });
         }
 
         function deleteData(id) {
@@ -232,7 +188,7 @@
                         '_method': 'DELETE',
                     };
                     $.ajax({
-                            url: "{{ route('student.destroy', ':id') }}".replace(':id', id),
+                            url: "{{ route('exam-bank.destroy', ':id') }}".replace(':id', id),
                             type: 'POST',
                             data: postForm,
                             dataType: 'json',
@@ -265,7 +221,7 @@
                         'ids': ids
                     };
                     $.ajax({
-                            url: "{{ route('student.destroyAll') }}",
+                            url: "{{ route('exam-bank.destroyAll') }}",
                             type: 'POST',
                             data: postForm,
                             dataType: 'json',
@@ -279,21 +235,6 @@
                         });
                 }
             });
-        }
-
-        function importExcel() {
-            $.ajax({
-                    url: "{{ route('student.importExcel') }}",
-                    type: 'GET',
-                })
-                .done(function(data) {
-                    $('#content-modal-ce').html(data);
-
-                    $("#modal-ce").modal("show");
-                })
-                .fail(function() {
-                    Swal.fire('Error!', 'An error occurred while creating the record.', 'error');
-                });
         }
     </script>
 @endpush

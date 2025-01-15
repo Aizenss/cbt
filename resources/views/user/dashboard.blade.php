@@ -41,11 +41,12 @@
                                 </div>
                             </div>
                             <button
-                                class="btn {{ $item->answered_questions == $item->examSchedule->total_question ? 'btn-success disabled' : 'btn-warning' }} text-nowrap mt-3"
+                                class="btn {{ $item->is_finished ? 'btn-success disabled' : 'btn-warning' }} text-nowrap mt-3"
                                 onclick="openModal({{ $item->id }})"
-                                {{ $item->answered_questions == $item->examSchedule->total_question ? 'disabled' : '' }}>
-                                {{ $item->answered_questions == $item->examSchedule->total_question ? 'Selesai' : 'Kerjakan' }}
-                                <i class="fa {{ $item->answered_questions == $item->examSchedule->total_question ? 'fa-lock' : 'fa-arrow-right' }} ms-2"></i>
+                                {{ $item->is_finished ? 'disabled' : '' }}>
+                                {{ $item->is_finished ? 'Selesai' : 'Kerjakan' }}
+                                <i
+                                    class="fa {{ $item->is_finished ? 'fa-check' : 'fa-arrow-right' }} ms-2"></i>
                             </button>
                         </div>
                     </div>

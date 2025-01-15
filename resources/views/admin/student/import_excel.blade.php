@@ -1,20 +1,19 @@
 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 <div class="text-center mb-4">
-    <h3 class="mb-2">Import Soal</h3>
+    <h3 class="mb-2">Import Siswa</h3>
     <p class="text-muted">Tambahkan Data Sesuai Dengan Informasi Yang Tersedia</p>
 </div>
-<form method="POST" class="row g-3" id="formCreate" action="{{ route('question-bank.importExcelStore') }}"
-    enctype="multipart/form-data">
+<form method="POST" class="row g-3" id="formCreate" action="{{ route('student.import') }}" enctype="multipart/form-data">
     @csrf
 
     <div class="col-12 col-md-12">
         <label class="form-label" for="exam_file">Upload File Excel <span class="text-danger">*</span></label>
-        <input type="file" id="exam_file" name="exam_file" class="form-control" accept=".xls,.xlsx" required />
+        <input type="file" id="exam_file" name="file" class="form-control" accept=".xls,.xlsx" required />
     </div>
 
     <div class="col-12 text-center">
         {{-- download template --}}
-        <a href="{{ asset('template/Format Import Soal.xlsx') }}" class="btn btn-primary me-sm-3 me-1">Download
+        <a href="{{ asset('template/Format Import Siswa.xlsx') }}" class="btn btn-primary me-sm-3 me-1">Download
             Template</a>
         <button type="submit" class="btn btn-primary me-sm-3 me-1">Submit</button>
         <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal"
@@ -29,7 +28,6 @@
         const form = event.target;
         const formData = new FormData(form);
         const url = form.action;
-        formData.append('examBankId', "{{ $examBank->id }}");
 
         Swal.fire({
             title: 'Importing...',

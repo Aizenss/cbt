@@ -60,10 +60,10 @@
                 <div data-i18n="Jadwal Ujian">Jadwal Ujian</div>
             </a>
         </li>
-        <li class="menu-item ">
-            <a href="{{ route('exam-schedule.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons ti ti-calendar"></i>
-                <div data-i18n="Penilaian">Penilaian</div>
+        <li class="menu-item {{ request()->routeIs('evaluation.*') ? 'active' : '' }}">
+            <a href="{{ route('evaluation.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-star"></i>
+                <div data-i18n="Evaluasi">Evaluasi</div>
             </a>
         </li>
     </ul>

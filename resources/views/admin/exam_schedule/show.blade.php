@@ -39,6 +39,12 @@
                 <div class="card">
                     <div class="card-header d-flex align-items-center justify-content-between   ">
                         <h5 class="card-title mb-0">Status Pengerjaan Siswa</h5>
+                        <div class="d-flex justify-content-end align-items-center gap-2">
+                            {{-- button kembali --}}
+                            <a href="{{ route('exam-schedule.index') }}" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-arrow-left"></i> Kembali
+                            </a>
+                        </div>
                     </div>
                     <div class="card-datatable table-responsive">
                         <table class="datatables table" id="data-table">
@@ -52,8 +58,8 @@
                                     <th>Nama Siswa</th>
                                     <th>Kelas</th>
                                     <th>NIS</th>
-                                    {{-- <th>Status Pengerjaan</th>
-                                    <th>Aksi</th> --}}
+                                    <th>Status Pengerjaan</th>
+                                    {{-- <th>Aksi</th> --}}
                                 </tr>
                             </thead>
                         </table>
@@ -149,6 +155,10 @@
                     {
                         data: 'nis',
                         name: 'nis'
+                    },
+                    {
+                        data: 'exam_status',
+                        name: 'exam_status'
                     },
                 ]
             });

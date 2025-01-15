@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DepartementClassController;
+use App\Http\Controllers\Admin\EvaluationController;
 use App\Http\Controllers\Admin\ExamScheduleController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\DashboardController;
@@ -69,7 +70,14 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     //student
     Route::get('/student/datatable', [StudentController::class, 'datatable'])->name('student.datatable');
     Route::get('/student/destroy-all', [StudentController::class, 'destroyAll'])->name('student.destroyAll');
+    Route::get('/student/import-excel', [StudentController::class, 'importExcel'])->name('student.importExcel');
+    Route::post('/student/import', [StudentController::class, 'import'])->name('student.import');
     Route::resource('student', StudentController::class);
+
+    //evaluation
+    Route::get('/evaluation/datatable', [EvaluationController::class, 'datatable'])->name('evaluation.datatable');
+    Route::get('/evaluation/destroy-all', [EvaluationController::class, 'destroyAll'])->name('evaluation.destroyAll');
+    Route::resource('evaluation', EvaluationController::class);
 });
 
 //guru

@@ -8,6 +8,7 @@ use App\Models\ExamSchedule;
 use App\Models\QuestionBank;
 use App\Models\ShareExam;
 use App\Models\Student;
+use App\Models\ExamStatus;
 use Illuminate\Http\Request;
 
 class ExamScheduleController extends Controller
@@ -285,6 +286,7 @@ class ExamScheduleController extends Controller
     public function datatableStudent(Request $request)
     {
         $data = $this->getDatatableStudent($request);
+        $examScheduleId = $request->exam_schedule_id;
 
         return datatables()
             ->of($data)
@@ -330,6 +332,19 @@ class ExamScheduleController extends Controller
             })
             ->addColumn('address', function ($data) {
                 return $data->address ?? null;
+            })
+            ->addColumn('exam_status', function ($data) use ($examScheduleId) {
+                $examStatus = ExamStatus::where('student_id', $data->id)
+                    ->where('exam_schedule_id', $examScheduleId)
+                    ->first();
+
+                if (!$examStatus) {
+                    return '<span class="badge bg-warning">Belum Mengerjakan</span>';
+                }
+
+                return $examStatus->is_finished == 'yes'
+                    ? '<span class="badge bg-success">Selesai</span>'
+                    : '<span class="badge bg-info">Sedang Mengerjakan</span>';
             })
             ->addColumn('action', function ($data) {
                 $btn = '<div class="d-flex">';
