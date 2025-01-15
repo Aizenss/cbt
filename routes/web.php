@@ -70,6 +70,8 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     //student
     Route::get('/student/datatable', [StudentController::class, 'datatable'])->name('student.datatable');
     Route::get('/student/destroy-all', [StudentController::class, 'destroyAll'])->name('student.destroyAll');
+    Route::get('/student/import-excel', [StudentController::class, 'importExcel'])->name('student.importExcel');
+    Route::post('/student/import', [StudentController::class, 'import'])->name('student.import');
     Route::resource('student', StudentController::class);
 
     //evaluation

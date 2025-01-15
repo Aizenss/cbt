@@ -14,6 +14,10 @@
                     <button type="button" class="btn btn-danger" id="delete-btn" style="display: none !important;">
                         <i class="fas fa-trash-alt"></i> Hapus Masal
                     </button>
+                    {{-- button import excel --}}
+                    <button type="button" class="btn btn-success btn-sm" onclick="importExcel()">
+                        <i class="fas fa-file-excel"></i> Import Excel
+                    </button>
                     <!-- Tombol Tambah -->
                     <button type="button" class="btn btn-primary btn-sm" onclick="createData()">
                         <i class="fas fa-plus"></i> Tambah
@@ -275,6 +279,21 @@
                         });
                 }
             });
+        }
+
+        function importExcel() {
+            $.ajax({
+                    url: "{{ route('student.importExcel') }}",
+                    type: 'GET',
+                })
+                .done(function(data) {
+                    $('#content-modal-ce').html(data);
+
+                    $("#modal-ce").modal("show");
+                })
+                .fail(function() {
+                    Swal.fire('Error!', 'An error occurred while creating the record.', 'error');
+                });
         }
     </script>
 @endpush
