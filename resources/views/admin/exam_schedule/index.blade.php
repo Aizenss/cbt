@@ -209,8 +209,12 @@
                             dataType: 'json',
                         })
                         .done(function(data) {
-                            Swal.fire('Deleted!', data['message'], 'success');
-                            $('#data-table').DataTable().ajax.reload();
+                            if (data.status) {
+                                Swal.fire('Deleted!', data.message, 'success');
+                                $('#data-table').DataTable().ajax.reload();
+                            } else {
+                                Swal.fire('Error!', data.message, 'error');
+                            }
                         })
                         .fail(function() {
                             Swal.fire('Error!', 'An error occurred while deleting the record.', 'error');

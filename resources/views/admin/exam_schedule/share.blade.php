@@ -8,9 +8,9 @@
     @csrf
 
     <div class="col-12 col-md-12" id="classParent">
-        <label class="form-label" for="class_id">Kelas<span class="text-danger">*</span></label>
+        <label class="form-label" for="class_id">Kelas</label>
         <select id="class_id" name="class_id[]" class="select2 form-select select2-primary" data-allow-clear="true"
-            required multiple>
+            multiple>
         </select>
     </div>
 

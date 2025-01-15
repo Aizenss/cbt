@@ -265,11 +265,16 @@ class ExamScheduleController extends Controller
     public function shareStore(Request $request)
     {
         try {
-            foreach ($request->class_id as $classId) {
-                ShareExam::updateOrCreate([
-                    'exam_schedule_id' => $request->exam_schedule_id,
-                    'class_id' => $classId,
-                ], []);
+            // Hapus data sebelumnya jika class_id kosong
+            if (empty($request->class_id)) {
+                ShareExam::where('exam_schedule_id', $request->exam_schedule_id)->delete();
+            } else {
+                foreach ($request->class_id as $classId) {
+                    ShareExam::updateOrCreate([
+                        'exam_schedule_id' => $request->exam_schedule_id,
+                        'class_id' => $classId,
+                    ], []);
+                }
             }
             return response()->json([
                 'status' => true,
