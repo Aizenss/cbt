@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ExamSchedule;
 use App\Models\QuestionBank;
 use App\Models\ExamAnswer;
+use App\Models\ExamStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -72,6 +73,13 @@ class UserViewController extends Controller
 
     public function clearSession(Request $request)
     {
+        // Simpan status ujian selesai
+        ExamStatus::create([
+            'student_id' => Auth::user()->id,
+            'exam_schedule_id' => $request->schedule_id,
+            'is_finished' => 'yes'
+        ]);
+
         session()->forget([
             'current_question',
             'exam_end_time',

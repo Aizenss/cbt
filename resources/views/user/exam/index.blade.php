@@ -242,12 +242,12 @@
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
 
-                // Tambahkan AJAX call untuk menghapus session
                 $.ajax({
                     url: "{{ route('exam.clear-session') }}",
                     type: 'POST',
                     data: {
-                        _token: "{{ csrf_token() }}"
+                        _token: "{{ csrf_token() }}",
+                        schedule_id: "{{ $schedule->id }}"
                     },
                     success: function() {
                         Swal.fire({
@@ -282,7 +282,7 @@
             if (examDuration > (canBeCompletedTime * 60)) {
                 Swal.fire({
                     title: 'Peringatan!',
-                    text: 'Anda harus menunggu pada waktu ' + canBeCompletedTime +
+                    text: 'Anda harus menunggu waktu dibawah ' + canBeCompletedTime +
                         ' menit sebelum menyelesaikan ujian',
                     icon: 'warning',
                     confirmButtonText: 'OK'
@@ -328,7 +328,8 @@
                                 url: "{{ route('exam.clear-session') }}",
                                 type: 'POST',
                                 data: {
-                                    _token: "{{ csrf_token() }}"
+                                    _token: "{{ csrf_token() }}",
+                                    schedule_id: "{{ $schedule->id }}"
                                 },
                                 success: function() {
                                     Swal.fire({

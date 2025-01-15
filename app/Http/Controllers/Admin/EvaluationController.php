@@ -63,10 +63,10 @@ class EvaluationController extends Controller
                 's.name as student_name',
                 's.nisn',
                 's.nis',
-                DB::raw('COUNT(CASE WHEN ea.answer = qb.correct_answer THEN 1 END) as correct_answers'),
-                DB::raw('COUNT(CASE WHEN ea.answer != qb.correct_answer THEN 1 END) as wrong_answers'),
+                DB::raw('COUNT(CASE WHEN ea.answer = qb.correct_answer AND ea.answer IS NOT NULL THEN 1 END) as correct_answers'),
+                DB::raw('COUNT(CASE WHEN ea.answer != qb.correct_answer OR ea.answer IS NULL THEN 1 END) as wrong_answers'),
                 'eb.passing_score as kkm',
-                DB::raw('(COUNT(CASE WHEN ea.answer = qb.correct_answer THEN 1 END) * 100.0 / COUNT(*)) as final_score')
+                DB::raw('(COUNT(CASE WHEN ea.answer = qb.correct_answer AND ea.answer IS NOT NULL THEN 1 END) * 100.0 / COUNT(*)) as final_score')
             )
             ->groupBy('s.id', 's.name', 's.nisn', 's.nis', 'eb.passing_score');
     }
