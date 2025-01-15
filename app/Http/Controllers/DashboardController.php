@@ -17,7 +17,12 @@ class DashboardController extends Controller
     public function index()
     {
         $student = Student::where('id', Auth::user()->id)->first();
-        $class = ShareExam::where('class_id', $student->departement_class_id)->get();
+        $class = ShareExam::where('class_id', $student->departement_class_id)
+            ->whereHas('examSchedule', function($query) {
+                $today = now()->format('Y-m-d');
+                $query->whereDate('exam_date', $today);
+            })
+            ->get();
 
         // Tambahkan data jumlah soal yang status ujiannya
         foreach($class as $item) {
